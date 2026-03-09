@@ -31,3 +31,11 @@ SpendWise aims to make personal finance **simple, insightful, and accessible**, 
 SpendWise will allow users to plan upcoming expenses and automatically calculate how much they should save each month.
 
 Instead of worrying about large upcoming expenses, SpendWise helps you **prepare gradually and stress-free**.
+
+## 🗺 Roadmap
+
+- [x] Authentication
+- [ ] Expense tracking
+- [ ] Expense categories
+- [ ] Dashboard analytics
+- [ ] Smart savings planner
