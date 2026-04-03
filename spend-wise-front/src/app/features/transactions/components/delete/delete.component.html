@@ -1,0 +1,36 @@
+@if (open() && transaction()) {
+  <div class="dialog-overlay" (click)="cancelClicked.emit()">
+    <div class="dialog-panel delete-panel" (click)="$event.stopPropagation()">
+
+      <div class="delete-icon-wrapper">
+        <mat-icon>delete_forever</mat-icon>
+      </div>
+
+      <h2 class="dialog-title" style="text-align:center">
+        Supprimer la transaction ?
+      </h2>
+
+      <p class="delete-description">
+        <strong>{{ transaction()?.description || 'Sans description' }}</strong> —
+        {{ transaction()?.type === 'INCOME' ? '+' : '-' }}
+        {{ transaction()?.amount | number:'1.2-2' }} €
+      </p>
+
+      <p class="delete-warning">
+        Cette action est irréversible.
+      </p>
+
+      <div class="dialog-footer">
+        <button class="btn-secondary" (click)="cancelClicked.emit()">
+          Annuler
+        </button>
+
+        <button class="btn-danger" (click)="confirmClicked.emit()">
+          <mat-icon>delete_forever</mat-icon>
+          Supprimer
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

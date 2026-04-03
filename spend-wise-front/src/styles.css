@@ -1,1 +1,45 @@
-/* You can add global styles to this file, and also import other style files */
+.profile-menu.mat-mdc-menu-panel {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+  margin-top: 8px;
+}
+
+.profile-menu .mat-mdc-menu-content {
+  padding: 0.5rem 0 !important;
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.profile-menu .mat-mdc-menu-item {
+  color: white !important;
+  min-height: 48px;
+  padding: 0 1.5rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.profile-menu .mat-mdc-menu-item:hover {
+  background: rgba(0, 212, 255, 0.2) !important;
+}
+
+.profile-menu .mat-mdc-menu-item mat-icon {
+  color: #00d4ff !important;
+  margin-right: 0;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.profile-menu .mat-mdc-menu-item span {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.profile-menu .mat-mdc-menu-item:first-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}

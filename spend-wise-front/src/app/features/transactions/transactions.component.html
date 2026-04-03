@@ -1,0 +1,248 @@
+<div class="transactions-container">
+
+  <div class="page-header">
+    <div class="page-title-container">
+      <h1 class="page-title">Transactions</h1>
+      <p class="page-subtitle">Historique de vos mouvements financiers</p>
+    </div>
+    <button mat-raised-button class="add-btn" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Ajouter
+    </button>
+  </div>
+
+  <div class="summary-cards">
+    <div class="summary-card income-card">
+      <div class="summary-icon">
+        <mat-icon>trending_up</mat-icon>
+      </div>
+      <div class="summary-info">
+        <span class="summary-label">Revenus</span>
+        <span class="summary-amount income-amount">
+          +{{ totalIncome() | number:'1.2-2' }} €
+        </span>
+      </div>
+    </div>
+
+    <div class="summary-card expense-card">
+      <div class="summary-icon">
+        <mat-icon>trending_down</mat-icon>
+      </div>
+      <div class="summary-info">
+        <span class="summary-label">Dépenses</span>
+        <span class="summary-amount expense-amount">
+          -{{ totalExpenses() | number:'1.2-2' }} €
+        </span>
+      </div>
+    </div>
+
+    <div class="summary-card balance-card">
+      <div class="summary-icon">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <div class="summary-info">
+        <span class="summary-label">Balance</span>
+        <span class="summary-amount" [class.income-amount]="balance() >= 0" [class.expense-amount]="balance() < 0">
+          {{ balance() >= 0 ? '+' : '' }}{{ balance() | number:'1.2-2' }} €
+        </span>
+      </div>
+    </div>
+  </div>
+
+  @if (!loading() && groupedTransactions().length > 0) {
+    <div class="transactions-list">
+      @for (group of groupedTransactions(); track group.date) {
+        <div class="date-group">
+
+          <div class="date-separator">
+            <span class="date-label">{{ group.date | date:'EEEE d MMMM yyyy' : '' : 'fr' }}</span>
+            <span class="date-count">{{ group.transactions.length }} opération{{ group.transactions.length > 1 ? 's' : '' }}</span>
+          </div>
+
+          @for (transaction of group.transactions; track transaction.id) {
+            <div class="transaction-item"
+                 [class.income]="transaction.type === 'INCOME'"
+                 [class.expense]="transaction.type === 'EXPENSE'"
+                 [class.deleting]="deletingId() === transaction.id">
+
+              <div class="transaction-icon">
+                <mat-icon>{{ transaction.type === 'INCOME' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+              </div>
+
+              <div class="transaction-details">
+                <span class="transaction-description">{{ transaction.description || 'Sans description' }}</span>
+                <span class="transaction-category" [style.color]="transaction.categoryColor">
+                  <span class="category-dot-inline" [style.background]="transaction.categoryColor"></span>
+                  {{ transaction.categoryName }}
+                </span>
+              </div>
+
+              <span class="transaction-amount">
+                {{ transaction.type === 'INCOME' ? '+' : '-' }}{{ transaction.amount | number:'1.2-2' }} €
+              </span>
+
+              <div class="transaction-actions">
+                <button mat-icon-button class="action-btn edit-btn"
+                        (click)="openEditDialog(transaction)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn delete-btn"
+                        (click)="confirmDelete(transaction)"
+                        [disabled]="deletingId() === transaction.id">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+  }
+
+  @if (!loading() && groupedTransactions().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon-wrapper">
+        <mat-icon>receipt_long</mat-icon>
+      </div>
+      <p class="empty-title">Aucune transaction</p>
+      <p class="empty-subtitle">Commencez par ajouter votre première transaction</p>
+      <button mat-raised-button class="add-btn" (click)="openAddDialog()">
+        <mat-icon>add</mat-icon>
+        Ajouter une transaction
+      </button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="empty-state">
+      <div class="empty-icon-wrapper loading-pulse">
+        <mat-icon>hourglass_empty</mat-icon>
+      </div>
+      <p class="empty-title">Chargement en cours…</p>
+    </div>
+  }
+
+</div>
+
+<!-- Dialog Modifier / Ajouter -->
+@if (showDialog()) {
+  <div class="dialog-overlay" (click)="closeDialog()">
+    <div class="dialog-panel" (click)="$event.stopPropagation()">
+
+      <div class="dialog-header">
+        <h2 class="dialog-title">{{ editingTransaction() ? 'Modifier la transaction' : 'Nouvelle transaction' }}</h2>
+        <button mat-icon-button class="dialog-close" (click)="closeDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="dialog-body">
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <div class="type-toggle">
+            <button class="type-btn"
+                    [class.active-income]="dialogForm().type === 'INCOME'"
+                    (click)="setDialogType('INCOME')">
+              <mat-icon>trending_up</mat-icon>
+              Revenu
+            </button>
+            <button class="type-btn"
+                    [class.active-expense]="dialogForm().type === 'EXPENSE'"
+                    (click)="setDialogType('EXPENSE')">
+              <mat-icon>trending_down</mat-icon>
+              Dépense
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Montant (€)</label>
+          <input class="form-input"
+                 type="number"
+                 min="0"
+                 step="0.01"
+                 placeholder="0.00"
+                 [value]="dialogForm().amount"
+                 (input)="updateDialogField('amount', $any($event.target).value)" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <input class="form-input"
+                 type="text"
+                 placeholder="Ex : Loyer, Salaire…"
+                 [value]="dialogForm().description"
+                 (input)="updateDialogField('description', $any($event.target).value)" />
+        </div>
+
+        <div class="form-group category-form-group">
+          <div class="category-label-row">
+            <label class="form-label">Catégorie</label>
+            <button class="btn-new-cat-trigger"
+                    (click)="showNewCategory.set(!showNewCategory())"
+                    [class.active]="showNewCategory()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          @if (showNewCategory()) {
+            <div class="new-category-popup">
+              <input class="new-cat-input"
+                     type="text"
+                     placeholder="Nom de la catégorie"
+                     [value]="newCategoryName()"
+                     (input)="newCategoryName.set($any($event.target).value)" />
+              <input class="color-picker"
+                     type="color"
+                     [value]="newCategoryColor()"
+                     (input)="newCategoryColor.set($any($event.target).value)" />
+              <button class="btn-add-cat" (click)="addCategory()">
+                <mat-icon>check</mat-icon>
+              </button>
+            </div>
+          }
+
+          <div class="category-grid">
+            @for (cat of categories(); track cat.id) {
+              <button class="category-chip"
+                      [class.selected]="dialogForm().categoryName === cat.name"
+                      [style.--cat-color]="cat.color"
+                      (click)="selectCategory(cat)">
+                <span class="category-dot" [style.background]="cat.color"></span>
+                {{ cat.name }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input class="form-input"
+                 type="date"
+                 [value]="dialogForm().date"
+                 (input)="updateDialogField('date', $any($event.target).value)" />
+        </div>
+      </div>
+
+      <div class="dialog-footer">
+        <button class="btn-secondary" (click)="closeDialog()">Annuler</button>
+        <button class="btn-primary" [class.btn-income]="dialogForm().type === 'INCOME'" [class.btn-expense]="dialogForm().type === 'EXPENSE'" (click)="saveTransaction()">
+          <mat-icon>{{ editingTransaction() ? 'save' : 'add' }}</mat-icon>
+          {{ editingTransaction() ? 'Enregistrer' : 'Ajouter' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<app-delete
+  [open]="showDeleteConfirm()"
+  [transaction]="transactionToDelete()"
+  (cancelClicked)="cancelDelete()"
+  (confirmClicked)="executeDelete()"
+/>
+

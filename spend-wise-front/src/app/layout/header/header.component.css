@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&display=swap');
+
+/* ─── Layout ─────────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 2rem !important;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
+  box-shadow: 0 4px 20px rgba(15, 32, 39, 0.6);
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* ─── Background pattern ─────────────────────────────────────────────── */
+
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ─── Logo ───────────────────────────────────────────────────────────── */
+
+.logo-container {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Navigation ─────────────────────────────────────────────────────── */
+
+nav {
+  display: flex;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+nav a {
+  color: white !important;
+  border-radius: 12px;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+nav a mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+nav a:hover {
+  background: rgba(0, 212, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transform: translateY(-2px);
+}
+
+nav a.active-link {
+  background: rgba(0, 212, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+/* ─── Profile button ─────────────────────────────────────────────────── */
+
+.profile-btn {
+  color: white !important;
+  background: transparent !important;
+  margin-left: 1rem;
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.profile-btn:hover {
+  background: rgba(0, 212, 255, 0.25) !important;
+  backdrop-filter: blur(10px);
+  transform: scale(1.1);
+}
+
+.profile-btn mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .logo-text {
+    font-size: 1.3rem;
+  }
+
+  nav a {
+    padding: 0.5rem !important;
+  }
+
+  nav a span {
+    display: none;
+  }
+}

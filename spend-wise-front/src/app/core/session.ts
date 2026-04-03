@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 export interface UserSession {
   token: string;
@@ -15,7 +15,9 @@ export class SessionService {
 
   session = this._session.asReadonly();
 
-  isLoggedIn = computed(() => !!this._session());
+  isLoggedIn(): boolean {
+    return !!this._session();
+  }
 
   setSession(session: UserSession) {
     this._session.set(session);
