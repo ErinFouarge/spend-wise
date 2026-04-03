@@ -35,7 +35,7 @@ Instead of worrying about large upcoming expenses, SpendWise helps you **prepare
 ## 🗺 Roadmap
 
 - [x] Authentication
-- [ ] Expense tracking
-- [ ] Expense categories
+- [x] Expense tracking
+- [x] Expense categories
 - [ ] Dashboard analytics
 - [ ] Smart savings planner
