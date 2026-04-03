@@ -2,10 +2,9 @@ package com.spend_wise.services;
 
 import com.spend_wise.domain.User;
 import com.spend_wise.exception.InvalidCredentialsException;
-import com.spend_wise.mapper.UserMapper;
-import com.spend_wise.dto.UserResponse;
 import com.spend_wise.exception.EmailAlreadyUsedException;
 import com.spend_wise.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +16,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public UserResponse signUp(String email, String password, String firstName, String lastName) throws EmailAlreadyUsedException {
+    public User signUp(String email, String password, String firstName, String lastName) throws EmailAlreadyUsedException {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyUsedException(email);
         }
@@ -39,12 +36,10 @@ public class UserService {
                 .token(UUID.randomUUID().toString())
                 .build();
 
-        userRepository.save(user);
-
-        return userMapper.toResponse(user);
+        return userRepository.save(user);
     }
 
-    public UserResponse signIn(String email, String password) {
+    public User signIn(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(InvalidCredentialsException::new);
 
@@ -52,7 +47,12 @@ public class UserService {
             throw new InvalidCredentialsException();
         }
 
-        return userMapper.toResponse(user);
+        return user;
+    }
+
+    public User getById(String userId) {
+        return userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
 }
